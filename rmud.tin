@@ -1,0 +1,22 @@
+#READ {config/secrets.tin};
+
+#alias {connect} {#ses rmud rmud.org 3040;u;$name;$password;}
+#macro {\e[11~} {connect}
+#macro {\eOP} {connect}
+#alias {mapload} {#map read maps/rmud.tt;#map goto 1;#split 13 0}
+#alias {mapsave} {#map write maps/rmud.tt}
+
+#macro {\e[5~} {n}
+#macro {\e[6~} {s}
+#macro {\e[H} {w}
+#macro {\e[F} {e}
+#macro {\co} {u}
+#macro {\cl} {d}
+
+#macro {\e[1;5A} {#buffer up}
+#macro {\e[1;5B} {#buffer down}
+
+
+#act {Увы, Вы не можете идти в этом направлении.} {#map undo}
+#act {Вы слишком устали.} {#map undo}
+#act {Для этого необходимо встать на ноги.} {#map undo}
