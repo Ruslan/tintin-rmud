@@ -1,22 +1,70 @@
 #READ {config/secrets.tin};
 
-#alias {connect} {#ses rmud rmud.org 3040;u;$name;$password;}
-#macro {\e[11~} {connect}
-#macro {\eOP} {connect}
+#alias {connect} {
+  #ses rmud rmud.org 3040;
+  u;
+  #var acc %0;
+  #showme $acc;
+  #showme $name[$acc];
+  $name[$acc];
+  $password[$acc];
+  ;
+  1;
+  1;
+}
+#macro {\e[11~} {connect main}
+#macro {\eOP} {connect main}
 #alias {mapload} {#map read maps/rmud.tt;#map goto 1;#split 13 0}
 #alias {mapsave} {#map write maps/rmud.tt}
 
-#macro {\e[5~} {n}
-#macro {\e[6~} {s}
-#macro {\e[H} {w}
-#macro {\e[F} {e}
-#macro {\co} {u}
-#macro {\cl} {d}
+#alias {_move} {#var _moving 1;%1;#delay 1 {#var _moving 0}}
+#alias {_mapundo} {#if {$_moving == 1} {#map undo} }
+
+#macro {\e[5~} {_move n}
+#macro {\e[6~} {_move s}
+#macro {\e[H} {_move w}
+#macro {\e[F} {_move e}
+#macro {\co} {_move u}
+#macro {\cl} {_move d}
 
 #macro {\e[1;5A} {#buffer up}
 #macro {\e[1;5B} {#buffer down}
 
+#MACRO {\eOS} {взя тру;взя все тру;брос тру}
 
-#act {Увы, Вы не можете идти в этом направлении.} {#map undo}
-#act {Вы слишком устали.} {#map undo}
-#act {Для этого необходимо встать на ноги.} {#map undo}
+
+#act {^Увы, Вы не можете идти в этом направлении.} {#map undo}
+#act {^Вы слишком устали.} {#map undo}
+#act {^Для этого необходимо встать на ноги.} {_mapundo}
+#act {^Вы слишком расслаблены, и Вам сейчас не до этого.} {_mapundo}
+#act {^Сделать это во сне, что ли}  {_mapundo}
+#act {^Не получится, Вы сражаетесь за свою жизнь}  {_mapundo}
+#act {^Ворота закрыты.} {_mapundo}
+#act {^Лошадь отказывается передвигаться в этом направлении.} {соск;#map undo}
+#act {^Чтобы передвигаться в этом направлении, Вам необходимо иметь лодку} {#map undo}
+
+#act {^Вы не удержали равновесия и упали!} {вста}
+#act {R.I.P} {взя все тру}
+
+#nop party interraction
+#ALIAS {уу %1} {гг уу %1;у %1}
+#ACTION {%1 сказал группе: "уу %2"} {#delay 1;у %2}
+#ACTION {^%1 %2 Вам ломоть хлеба.} {есть хле}
+
+#alias {пати} {
+  #regex {$name[$acc]} {$leader} {
+    #foreach $name[%*] {i} {
+      #foreach ($i) {j} {
+        груп $i;
+      }
+    }
+  }
+  {след $leader}
+}
+
+#regex {$name[$acc]} {$leader} {
+  #nop Leader only actions
+} {
+  #nop Member only actions
+  #act {^$leader соскочил} соск
+}
