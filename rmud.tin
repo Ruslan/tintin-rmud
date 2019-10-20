@@ -53,7 +53,8 @@
 #ACTION {^%1 %2 Вам ломоть хлеба.} {есть хле}
 #ACTION {^%1 сказал группе: "уу %2"} {#delay 0.5 {у %2}}
 #regex {$acc} {stun} {
-  #ACTION {^%1 сказал группе: "уу %2"} {соск;сби %2;вста;вскоч}
+  #alias {стан} {соск;сби %1;вста;вскоч}
+  #ACTION {^%1 сказал группе: "уу %2"} {стан %2};
 }
 #ACTION {^$leader сказал группе: "кк %2"} {%2}
 
@@ -74,3 +75,6 @@
   #nop Member only actions
   #act {^$leader соскочил} соск
 }
+
+#action {~^\e[1;36m%0\e[0;0m} #map set roomname %0;
+#config {convert meta} off
